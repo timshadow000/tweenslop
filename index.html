@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tweenslop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600;800&family=Unbounded:wght@800;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d1147;--paper:#f1edff;--card:#fff;--pink:#ff4f8b;--sun:#ffc83d;--sky:#5bc8ff;--pop:cubic-bezier(.34,1.8,.64,1);
+--disp:'Unbounded','Arial Black',sans-serif;--body:'Onest',system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:400 15px/1.45 var(--body);background:var(--paper);background-image:radial-gradient(#cfc6ff 1.5px,transparent 1.5px);background-size:22px 22px}
+.top{padding:28px 24px 8px;max-width:1280px;margin:0 auto}
+.logo{margin:0;font:900 clamp(2.4rem,7vw,5rem)/1 var(--disp);letter-spacing:-.03em;text-shadow:4px 4px 0 var(--pink)}
+.logo span{display:inline-block;transform-origin:50% 100%;animation:tw 1.5s both;animation-delay:calc(var(--i)*.07s)}
+.logo:hover span{animation-name:tw2}
+@keyframes tw{0%{transform:scale(1)}18%{transform:scale(.78,1.45)}36%{transform:scale(1.2,.72)}54%{transform:scale(.94,1.1)}100%{transform:scale(1)}}
+@keyframes tw2{0%{transform:scale(1)}18%{transform:scale(.78,1.45)}36%{transform:scale(1.2,.72)}54%{transform:scale(.94,1.1)}100%{transform:scale(1)}}
+.tag{margin:10px 0 0;font-weight:600;font-size:1.05rem}
+.app{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:28px;max-width:1280px;margin:0 auto;padding:20px 24px 100px;align-items:start}
+.stage{position:sticky;top:16px}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:20px;padding:18px 20px;margin-bottom:18px;box-shadow:5px 5px 0 var(--ink)}
+.card:nth-child(even){border-radius:26px 14px 26px 14px}
+h2{margin:0 0 12px;font:800 1.05rem/1.2 var(--disp)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px 18px;margin-bottom:6px}
+.f{display:grid;grid-template-columns:1fr auto;gap:3px 8px;align-items:center;font-weight:600;font-size:.85rem}
+.f>span:first-child{grid-column:1/-1}
+.f>select,.f>input:not([type=range]){grid-column:1/-1}
+.f>input[type=range]+span{font-weight:800;min-width:2.6em;text-align:right}
+.chk{display:flex;gap:8px;align-items:center;font-weight:600;font-size:.88rem;margin:4px 0}
+.row{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:8px}
+input[type=range]{accent-color:var(--pink);width:100%}
+input[type=checkbox]{accent-color:var(--pink);width:18px;height:18px}
+select,input:not([type=range]):not([type=checkbox]):not([type=file]):not([type=color]){font:600 .9rem var(--body);color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:10px;padding:6px 9px;min-width:0}
+input[type=color]{border:2px solid var(--ink);border-radius:10px;padding:0;height:32px;width:46px;background:#fff}
+input[type=file]{font:600 .8rem var(--body);max-width:100%}
+::file-selector-button{font:700 .8rem var(--body);color:var(--ink);background:var(--sun);border:2px solid var(--ink);border-radius:9px;padding:5px 10px;margin-right:8px;cursor:pointer}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+button{font:700 .88rem var(--body);color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px 14px;cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:transform .35s var(--pop),box-shadow .2s}
+button:hover{transform:translate(-1px,-2px) scale(1.03,.98);box-shadow:4px 5px 0 var(--ink)}
+button:active{transform:translate(3px,3px) scale(1.06,.9);box-shadow:0 0 0 var(--ink)}
+#gen{background:var(--pink);color:#fff;font:800 1.05rem var(--disp);padding:12px 22px}
+#rec{background:var(--ink);color:var(--sun)}
+.ghost{background:var(--sky)}
+fieldset{border:2px solid var(--ink);border-radius:16px;background:var(--paper);padding:14px 16px;margin:14px 0;min-width:0}
+legend{background:var(--ink);color:#fff;padding:3px 14px;border-radius:99px;font:800 .8rem var(--disp)}
+fieldset>br{display:none}
+fieldset>*{margin-top:6px}
+.addfx{margin-top:12px;font-size:.88rem}.chips{display:flex;flex-wrap:wrap;gap:6px;vertical-align:middle;margin-top:6px}
+.chips button{padding:3px 11px;border-radius:99px;font-size:.8rem;box-shadow:2px 2px 0 var(--ink)}
+.chips button:hover{background:var(--sun)}
+.fxrow{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;background:#fff;border:2px solid var(--ink);border-left:8px solid var(--pink);border-radius:12px;padding:8px 12px;margin:8px 0;font-size:.85rem}
+.fxrow b{font:800 .85rem var(--disp);min-width:7em}
+.fxrow input[type=range]{width:110px}
+.fxrow .gen,.fxrow .scr{display:inline-flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+.fxrow i{font-style:normal;font-weight:800;min-width:2.4em}
+.screen{border:3px solid var(--ink);border-radius:20px;box-shadow:8px 8px 0 var(--pink);background:#000;overflow:hidden;line-height:0}
+#c{width:100%;height:auto;aspect-ratio:1;display:block}
+.bar{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0 10px}
+#st{font-weight:800;min-height:1.4em;margin:6px 0}
+#info{font-size:.82rem;font-weight:600;margin:4px 0}
+#out a{display:inline-block;background:var(--sun);color:var(--ink);font-weight:800;border:2px solid var(--ink);border-radius:12px;padding:8px 14px;text-decoration:none;box-shadow:3px 3px 0 var(--ink)}
+small{opacity:.7}
+@media(max-width:900px){.app{grid-template-columns:1fr}.stage{position:static;order:-1}}
+@media(prefers-reduced-motion:reduce){.logo span{animation:none}button{transition:none}}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.lang{display:flex;gap:8px;padding-top:10px}
+.lang button{padding:6px 12px}
+.lang button[aria-pressed=true]{background:var(--pink);color:#fff}
+</style>
+</head>
+<body>
+<header class="top">
+<div><h1 class="logo" aria-label="tweenslop"><span style="--i:0">t</span><span style="--i:1">w</span><span style="--i:2">e</span><span style="--i:3">e</span><span style="--i:4">n</span><span style="--i:5">s</span><span style="--i:6">l</span><span style="--i:7">o</span><span style="--i:8">p</span></h1>
+<p class="tag"><span data-i="s7">Upload a person, get an edit where they stretch up and down on the beat.</span></p></div>
+<div class="lang" role="group" aria-label="Language"><button data-l="en" aria-pressed="true">EN</button><button data-l="ru" aria-pressed="false">RU</button></div>
+</header>
+<main class="app">
+<div class="ctrl">
+
+<section class="card"><h2 data-i="s8">Scenes</h2>
+<label class="chk"><input type="checkbox" id="autocut" checked> <span data-i="s9">Cut out the background automatically</span> <small data-i="s10">(needs internet; PNGs without background are left alone)</small></label>
+<div id="scenes"></div>
+<button id="addScene" class="ghost" data-i="s11">+ add scene</button>
+</section>
+
+<section class="card"><h2 data-i="s12">Stretch</h2><div class="grid">
+<label class="f"><span data-i="s13">Tween length, sec</span><input type="number" id="tw" value="0.45" min="0.1" step="0.05"></label>
+<label class="f"><span data-i="s14">Stretch strength</span><input type="range" id="pw" min="0.2" max="1" step="0.05" value="0.7"></label>
+<label class="f"><span data-i="s15">Height ×</span><input type="range" id="my" min="0" max="2" step="0.05" value="1"></label>
+<label class="f"><span data-i="s16">Width ×</span><input type="range" id="mx" min="0" max="2" step="0.05" value="1"></label>
+<label class="f"><span data-i="s18">Easing</span><select id="ease"><option value="elastic">elastic</option><option value="bounce">bounce</option><option value="back">back</option><option value="expo">expo</option><option value="cubic">cubic</option><option value="mix" data-i="s17">mix (random)</option></select></label>
+<label class="f"><span data-i="s22">Pattern</span><select id="pat"><option value="ud" data-i="s19">up-down</option><option value="udlr" data-i="s20">up-down + wide</option><option value="rand" data-i="s21">random</option></select></label>
+<label class="f"><span data-i="s23">Seed</span><input type="number" id="seed" value="1" min="0" step="1"></label>
+</div>
+<div class="row"><label class="chk"><input type="checkbox" id="flash" checked> <span data-i="s24">Flash on beat</span></label><label class="chk"><input type="checkbox" id="shake" checked> <span data-i="s25">Shake</span></label></div>
+<div class="grid"><label class="f"><span data-i="s26">Flash strength</span><input type="range" id="flashAmt" min="0" max="1" step="0.05" value="0.6"></label><label class="f"><span data-i="s27">Shake strength</span><input type="range" id="shakeAmt" min="0" max="60" step="1" value="10"></label></div>
+</section>
+
+<section class="card"><h2 data-i="s28">Person and rotation</h2><div class="grid">
+<label class="f"><span data-i="s29">Position X, %</span><input type="range" id="posX" min="0" max="100" step="1" value="50"></label>
+<label class="f"><span data-i="s30">Bottom Y, %</span><input type="range" id="posY" min="0" max="130" step="1" value="100"></label>
+<label class="f"><span data-i="s31">Size, % of height</span><input type="range" id="size" min="20" max="200" step="1" value="60"></label>
+<label class="f"><span data-i="s35">Pivot point</span><select id="piv"><option value="1" data-i="s32">feet (bottom)</option><option value="0.5" data-i="s33">center</option><option value="0" data-i="s34">head (top)</option></select></label>
+<label class="f"><span data-i="s40">Rotation</span><select id="rotMode"><option value="spin" data-i="s36">full spin (360°)</option><option value="tilt" data-i="s37">tilts left-right</option><option value="rand" data-i="s38">random angles</option><option value="none" data-i="s39">none</option></select></label>
+<label class="f"><span data-i="s41">Tilt angle, °</span><input type="range" id="rotDeg" min="0" max="180" step="1" value="25"></label>
+<label class="f"><span data-i="s42">Spin every, beats</span><select id="spinEvery"><option value="1">1</option><option selected value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
+<label class="f"><span data-i="s43">Turns</span><select id="turns"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+<label class="f"><span data-i="s47">Direction</span><select id="spinDir"><option value="alt" data-i="s44">back and forth</option><option value="cw" data-i="s45">clockwise</option><option value="ccw" data-i="s46">counter-clockwise</option></select></label>
+</div>
+<label class="chk"><input type="checkbox" id="fit"> <span data-i="s48">Keep inside the frame</span></label>
+</section>
+
+<section class="card"><h2 data-i="s49">Intro and outro</h2>
+<div class="row"><label class="chk"><input type="checkbox" id="useIntro" checked> <span data-i="s50">Intro</span></label></div>
+<div class="grid"><label class="f"><span data-i="s51">Top line</span><input id="t1" value="CHANNEL"></label><label class="f"><span data-i="s52">Bottom line</span><input id="t2" value="YOU"></label><label class="f"><span data-i="s53">Intro animation</span><select id="aIntro"><option value="line" data-i="s1">red line + jitter</option><option value="slide" data-i="s2">slide in from sides</option><option value="zoom" data-i="s3">zoom</option><option value="type" data-i="s4">typewriter</option><option value="glitch" data-i="s5">RGB glitch</option><option value="none" data-i="s6">no animation</option></select></label><label class="f"><span data-i="s54">Length, sec</span><input type="number" id="dIntro" value="2" min="0" step="0.5"></label></div>
+<div class="row"><label class="chk"><input type="checkbox" id="useOutro" checked> <span data-i="s55">Outro</span></label></div>
+<div class="grid"><label class="f"><span data-i="s56">Top line</span><input id="o1" value="follow for more"></label><label class="f"><span data-i="s57">Bottom line</span><input id="o2" value="@you"></label><label class="f"><span data-i="s58">Outro animation</span><select id="aOutro"><option value="zoom" data-i="s3">zoom</option><option value="line" data-i="s1">red line + jitter</option><option value="slide" data-i="s2">slide in from sides</option><option value="type" data-i="s4">typewriter</option><option value="glitch" data-i="s5">RGB glitch</option><option value="none" data-i="s6">no animation</option></select></label><label class="f"><span data-i="s59">Length, sec</span><input type="number" id="dOutro" value="2" min="0" step="0.5"></label></div>
+</section>
+
+<section class="card"><h2 data-i="s60">Music</h2>
+<div class="row"><button id="mkbeat">🎵 <span data-i="s61">Make music for the beat</span></button>
+<label class="f"><span data-i="s64">Style</span><select id="mstyle"><option value="phonk" data-i="s62">phonk (heavy 808)</option><option value="techno">techno</option><option value="lite" data-i="s63">light</option></select></label></div>
+<p><small data-i="s65">Music is fitted to the tween length and scenes. After changing them, press the button again.</small></p>
+<div class="row"><label class="f"><span data-i="s66">Or upload your own</span><input type="file" id="aud" accept="audio/*"></label>
+<label class="f"><span data-i="s67">Start at second</span><input type="number" id="audOff" value="0" min="0" step="0.1"></label></div>
+<span id="audInfo"></span>
+</section>
+
+<section class="card"><h2 data-i="s68">Video</h2><div class="grid">
+<label class="f"><span data-i="s69">Recording FPS</span><select id="fps"><option value="60">60</option><option value="72">72</option><option value="90">90</option><option value="120">120</option></select></label>
+<label class="f"><span data-i="s70">All effects speed ×</span><input type="range" id="gspd" min="0.25" max="3" step="0.05" value="1"></label>
+</div><p><small data-i="s71">FPS applies when recording. Preview is limited by your screen's refresh rate.</small></p>
+</section>
+
+</div>
+<aside class="stage">
+<div class="screen"><canvas id="c" width="1080" height="1080"></canvas></div>
+<div class="bar"><button id="gen">▶ Generate</button><button id="prev" data-i="s72">Preview</button><button id="rec">⏺ <span data-i="s73">Record .webm</span></button></div>
+<div id="st"></div>
+<div id="info"></div>
+<div id="out"></div>
+</aside>
+</main>
+
+<script>
+const W = 1080, H = 1080, FPS = 60;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const $ = id => document.getElementById(id);
+const TR = {"en": {"s1": "red line + jitter", "s2": "slide in from sides", "s3": "zoom", "s4": "typewriter", "s5": "RGB glitch", "s6": "no animation", "fx_scroll": "moving background", "fx_blur": "blur", "fx_invert": "invert", "fx_gray": "grayscale", "fx_sepia": "sepia", "fx_saturate": "saturation", "fx_contrast": "contrast", "fx_hue": "rainbow", "fx_strobe": "strobe", "fx_glow": "glow", "fx_vignette": "vignette", "fx_rgb": "RGB split", "fx_vhs": "VHS", "fx_glitch": "glitch", "fx_wave": "wave", "fx_skew": "skew", "fx_mirror": "mirror", "fx_tile": "tiles", "fx_pixel": "pixelate", "fx_shake": "shake", "fx_zoom": "breathing zoom", "fx_pulse": "beat pulse", "fx_spin": "layer spin", "fx_trail": "trail", "fx_flash": "beat flash", "errImg": "Couldn't open the image (HEIC isn't supported, use JPG/PNG)", "errRead": "Couldn't read the file", "ok": "ok", "no": "none", "infoScene": "scene {0}: person {1}, background {2}", "infoMusic": "music", "err": "error", "errBg": "background error", "errMusic": "music error", "photoOk": "photo loaded", "cutting": "cutting out the background… (first run downloads the model, up to a minute)", "cutOk": "background removed", "cutFail": "couldn't remove the background ({0}), using the photo as is. Better upload a PNG without background.", "trackLen": "track length: {0} s", "audFail": "couldn't read the audio", "makingMusic": "making music…", "musicReady": "music ready", "beatReady": "beat music ready: {0} BPM, {1} s", "download": "download", "done": "done", "recording": "recording {0} fps…", "playing": "playing…", "noPerson": "no scene has a person yet — pick a file in the Person field", "uploadPerson": "upload a person photo", "scene": "Scene", "on": "on:", "onBg": "background", "onPerson": "person", "onAll": "everything", "amount": "amount", "speedX": "speed X", "pxUnits": "px/s (minus = left/up)", "mirrorSeams": "mirror seams", "speedMul": "speed ×", "remove": "× remove", "sPerson": "Person", "sBg": "Background", "sDur": "Scene length, sec", "sColor": "Color if no background", "addEffect": "Add effect:", "random": "🎲 random", "delScene": "delete scene", "s7": "Upload a person, get an edit where they stretch up and down on the beat.", "s8": "Scenes", "s9": "Cut out the background automatically", "s10": "(needs internet; PNGs without background are left alone)", "s11": "+ add scene", "s12": "Stretch", "s13": "Tween length, sec", "s14": "Stretch strength", "s15": "Height ×", "s16": "Width ×", "s17": "mix (random)", "s18": "Easing", "s19": "up-down", "s20": "up-down + wide", "s21": "random", "s22": "Pattern", "s23": "Seed", "s24": "Flash on beat", "s25": "Shake", "s26": "Flash strength", "s27": "Shake strength", "s28": "Person and rotation", "s29": "Position X, %", "s30": "Bottom Y, %", "s31": "Size, % of height", "s32": "feet (bottom)", "s33": "center", "s34": "head (top)", "s35": "Pivot point", "s36": "full spin (360°)", "s37": "tilts left-right", "s38": "random angles", "s39": "none", "s40": "Rotation", "s41": "Tilt angle, °", "s42": "Spin every, beats", "s43": "Turns", "s44": "back and forth", "s45": "clockwise", "s46": "counter-clockwise", "s47": "Direction", "s48": "Keep inside the frame", "s49": "Intro and outro", "s50": "Intro", "s51": "Top line", "s52": "Bottom line", "s53": "Intro animation", "s54": "Length, sec", "s55": "Outro", "s56": "Top line", "s57": "Bottom line", "s58": "Outro animation", "s59": "Length, sec", "s60": "Music", "s61": "Make music for the beat", "s62": "phonk (heavy 808)", "s63": "light", "s64": "Style", "s65": "Music is fitted to the tween length and scenes. After changing them, press the button again.", "s66": "Or upload your own", "s67": "Start at second", "s68": "Video", "s69": "Recording FPS", "s70": "All effects speed ×", "s71": "FPS applies when recording. Preview is limited by your screen's refresh rate.", "s72": "Preview", "s73": "Record .webm"}, "ru": {"s1": "красная линия + дрожь", "s2": "слайд с боков", "s3": "зум", "s4": "печатная машинка", "s5": "глитч rgb", "s6": "без анимации", "fx_scroll": "фон едет", "fx_blur": "размытие", "fx_invert": "инверсия", "fx_gray": "ч/б", "fx_sepia": "сепия", "fx_saturate": "насыщенность", "fx_contrast": "контраст", "fx_hue": "радуга", "fx_strobe": "строб", "fx_glow": "свечение", "fx_vignette": "виньетка", "fx_rgb": "rgb-сдвиг", "fx_vhs": "VHS", "fx_glitch": "глитч", "fx_wave": "волна", "fx_skew": "перекос", "fx_mirror": "зеркало", "fx_tile": "плитка", "fx_pixel": "пиксели", "fx_shake": "тряска", "fx_zoom": "дыхание-зум", "fx_pulse": "пульс на бит", "fx_spin": "вращение слоя", "fx_trail": "шлейф", "fx_flash": "вспышка на бит", "errImg": "не смог открыть картинку (HEIC не поддерживается, нужен JPG/PNG)", "errRead": "не смог прочитать файл", "ok": "ок", "no": "нет", "infoScene": "кадр {0}: человек {1}, фон {2}", "infoMusic": "музыка", "err": "ошибка", "errBg": "ошибка фона", "errMusic": "ошибка музыки", "photoOk": "фото загружено", "cutting": "вырезаю фон… (в первый раз качает модель, до минуты)", "cutOk": "фон вырезан", "cutFail": "не вышло вырезать фон ({0}), беру фото как есть. Лучше PNG без фона.", "trackLen": "длина трека: {0} с", "audFail": "не смог прочитать аудио", "makingMusic": "делаю музыку…", "musicReady": "музыка готова", "beatReady": "музыка под бит готова: {0} BPM, {1} с", "download": "скачать", "done": "готово", "recording": "пишу {0} fps…", "playing": "играю…", "noPerson": "ни в одном кадре нет человека — выбери файл в поле «Человек»", "uploadPerson": "загрузи фото человека", "scene": "Кадр", "on": "на:", "onBg": "фон", "onPerson": "человека", "onAll": "всё", "amount": "сила", "speedX": "скорость X", "pxUnits": "px/сек (минус = влево/вверх)", "mirrorSeams": "зеркалить стыки", "speedMul": "скорость ×", "remove": "× убрать", "sPerson": "Человек", "sBg": "Фон", "sDur": "Длина кадра, сек", "sColor": "Цвет, если нет фона", "addEffect": "Добавить эффект:", "random": "🎲 случайные", "delScene": "удалить кадр", "s7": "Загрузи человека и получи эдит, где его тянет вверх и вниз на бит.", "s8": "Кадры", "s9": "Вырезать фон у фото автоматически", "s10": "(нужен интернет, PNG без фона не трогается)", "s11": "+ добавить кадр", "s12": "Растяжка", "s13": "Длина твина, сек", "s14": "Сила растяжки", "s15": "По высоте ×", "s16": "По ширине ×", "s17": "mix (рандом)", "s18": "Изинг", "s19": "вверх-вниз", "s20": "вверх-вниз + вширь", "s21": "рандом", "s22": "Паттерн", "s23": "Seed", "s24": "Вспышка на бит", "s25": "Тряска", "s26": "Сила вспышки", "s27": "Сила тряски", "s28": "Человек и вращение", "s29": "Позиция X, %", "s30": "Низ по Y, %", "s31": "Размер, % высоты", "s32": "ноги (низ)", "s33": "центр", "s34": "голова (верх)", "s35": "Точка вращения", "s36": "полное кручение (360°)", "s37": "наклоны влево-вправо", "s38": "рандомные углы", "s39": "нет", "s40": "Вращение", "s41": "Угол наклонов, °", "s42": "Крутить каждые, бит", "s43": "Оборотов", "s44": "туда-сюда", "s45": "по часовой", "s46": "против часовой", "s47": "Направление", "s48": "Не давать вылезать за кадр", "s49": "Интро и оутро", "s50": "Интро", "s51": "Верхняя строка", "s52": "Нижняя строка", "s53": "Анимация интро", "s54": "Длина, сек", "s55": "Оутро", "s56": "Верхняя строка", "s57": "Нижняя строка", "s58": "Анимация оутро", "s59": "Длина, сек", "s60": "Музыка", "s61": "Сделать музыку под бит", "s62": "phonk (тяжёлый 808)", "s63": "лёгкий", "s64": "Стиль", "s65": "Музыка подгоняется под длину твина и кадры. После их смены нажми кнопку ещё раз.", "s66": "Или загрузи свою", "s67": "Начать со секунды", "s68": "Видео", "s69": "FPS записи", "s70": "Скорость всех эффектов ×", "s71": "FPS работает при записи. Превью ограничено частотой твоего экрана.", "s72": "Превью", "s73": "Записать .webm"}};
+let LANG = 'en'; try { if (localStorage.getItem('tw_lang') === 'ru') LANG = 'ru'; } catch (e) {}
+const tr = (k, ...a) => { let s = (TR[LANG][k] != null ? TR[LANG][k] : (TR.en[k] != null ? TR.en[k] : k)); a.forEach((v, i) => s = s.split('{' + i + '}').join(v)); return s; };
+let audMsg = null;
+const setAudMsg = fn => { audMsg = fn; $('audInfo').textContent = fn ? fn() : ''; };
+function applyLang() {
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i]').forEach(el => el.textContent = tr(el.dataset.i));
+  document.querySelectorAll('[data-fx]').forEach(el => el.textContent = tr('fx_' + el.dataset.fx));
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.l === LANG)));
+  if (audMsg) $('audInfo').textContent = audMsg();
+  renum(); report();
+}
+const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; };
+const LB = mk(), LP = mk(), LA = mk(), SC = mk(), PX = document.createElement('canvas');
+let audBuf = null, running = false;
+const scenes = [];
+const mod = (a, b) => ((a % b) + b) % b;
+
+async function loadImg(file) {
+  try { return await createImageBitmap(file); }
+  catch (e1) {
+    return await new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error(tr('errImg'))); i.src = fr.result; };
+      fr.onerror = () => rej(new Error(tr('errRead')));
+      fr.readAsDataURL(file);
+    });
+  }
+}
+function hasAlpha(img) {
+  const c = document.createElement('canvas'); c.width = 64; c.height = 64;
+  const g = c.getContext('2d'); g.drawImage(img, 0, 0, 64, 64);
+  const d = g.getImageData(0, 0, 64, 64).data;
+  for (let i = 3; i < d.length; i += 4) if (d[i] < 250) return true;
+  return false;
+}
+function report() {
+  const f = im => im ? tr('ok') + ' ' + im.width + '×' + im.height : tr('no');
+  $('info').textContent = scenes.map((s, i) => tr('infoScene', i + 1, f(s.person), f(s.bg))).join(' | ') + ' | ' + tr('infoMusic') + ': ' + (audBuf ? tr('ok') + ' ' + audBuf.duration.toFixed(1) + ' s' : tr('no'));
+}
+window.addEventListener('error', e => { $('st').textContent = tr('err') + ': ' + e.message; });
+window.addEventListener('unhandledrejection', e => { $('st').textContent = tr('err') + ': ' + (e.reason && e.reason.message || e.reason); });
+
+async function processPerson(sc) {
+  if (!sc.pf) return;
+  const my = ++sc.tok;
+  try { sc.person = await loadImg(sc.pf); draw(1); $('st').textContent = tr('photoOk'); }
+  catch (err) { $('st').textContent = tr('err') + ': ' + err.message; sc.person = null; draw(1); return; }
+  if (!$('autocut').checked || hasAlpha(sc.person)) return;
+  $('st').textContent = tr('cutting');
+  try {
+    const { removeBackground } = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
+    const img = await loadImg(await removeBackground(sc.pf));
+    if (my !== sc.tok) return;
+    sc.person = img; draw(1); $('st').textContent = tr('cutOk');
+  } catch (err) { $('st').textContent = tr('cutFail', err.message); }
+}
+$('aud').onchange = async e => {
+  const f = e.target.files[0]; if (!f) { audBuf = null; setAudMsg(null); return; }
+  try { const ac = new AudioContext(); audBuf = await ac.decodeAudioData(await f.arrayBuffer()); ac.close(); const dl = audBuf.duration.toFixed(1); setAudMsg(() => tr('trackLen', dl)); }
+  catch (err) { audBuf = null; setAudMsg(() => tr('audFail')); }
+  report();
+};
+
+const FX = { scroll: 'bg', blur: 'all', invert: 'all', gray: 'all', sepia: 'all', saturate: 'all', contrast: 'all', hue: 'all', strobe: 'all', glow: 'all', vignette: 'all', rgb: 'all', vhs: 'all', glitch: 'all', wave: 'all', skew: 'all', mirror: 'all', tile: 'all', pixel: 'all', shake: 'all', zoom: 'all', pulse: 'all', spin: 'all', trail: 'person', flash: 'all' };
+function addFx(sc, box, type, am) {
+  const e = { type, tg: FX[type], am: am || 0.5, sp: 1, vx: -300, vy: 0, mir: false };
+  sc.fx.push(e);
+  const d = document.createElement('div'); d.className = 'fxrow';
+  d.innerHTML = `<b data-fx="${type}"></b>
+    <span class="gen"><span data-i="on"></span> <select class="tg"><option value="bg" data-i="onBg"></option><option value="person" data-i="onPerson"></option><option value="all" data-i="onAll"></option></select>
+      <span data-i="amount"></span> <input type="range" class="am" min="0" max="1" step="0.05"><i></i></span>
+    <span class="scr"><span data-i="speedX"></span> <input type="number" class="vx" step="50" style="width:70px"> Y <input type="number" class="vy" step="50" style="width:70px"> <span data-i="pxUnits"></span>
+      <label><input type="checkbox" class="mir"> <span data-i="mirrorSeams"></span></label></span>
+    <span data-i="speedMul"></span> <input type="range" class="sp" min="0.1" max="4" step="0.1"><i></i> <button class="rm" data-i="remove"></button>`;
+  const q = s => d.querySelector(s), is = type === 'scroll';
+  q('.gen').style.display = is ? 'none' : ''; q('.scr').style.display = is ? '' : 'none';
+  const bind = (sel, key, num) => { const el = q(sel), lab = el.nextElementSibling; el.value = e[key]; if (lab && lab.tagName === 'I') lab.textContent = e[key];
+    el.oninput = () => { e[key] = num ? (+el.value || 0) : el.value; if (lab && lab.tagName === 'I') lab.textContent = el.value; }; };
+  bind('.tg', 'tg'); bind('.am', 'am', 1); bind('.sp', 'sp', 1); bind('.vx', 'vx', 1); bind('.vy', 'vy', 1);
+  q('.tg').onchange = () => e.tg = q('.tg').value;
+  q('.mir').onchange = ev => e.mir = ev.target.checked;
+  q('.rm').onclick = () => { sc.fx.splice(sc.fx.indexOf(e), 1); d.remove(); draw(1); };
+  box.appendChild(d); applyLang();
+}
+function addScene() {
+  const sc = { person: null, bg: null, pf: null, tok: 0, dur: 4, bgc: '#3a4a6b', fx: [] };
+  scenes.push(sc);
+  const el = document.createElement('fieldset');
+  el.innerHTML = `<legend></legend>
+    <div class="grid">
+      <label class="f"><span data-i="sPerson"></span><input type="file" class="pf" accept="image/*"></label>
+      <label class="f"><span data-i="sBg"></span><input type="file" class="bf" accept="image/*"></label>
+      <label class="f"><span data-i="sDur"></span><input type="number" class="dur" value="4" min="0.5" step="0.5"></label>
+      <label class="f"><span data-i="sColor"></span><input type="color" class="bgc" value="#3a4a6b"></label>
+    </div>
+    <div class="addfx"><b data-i="addEffect"></b> <span class="chips"></span> <button class="rnd" data-i="random"></button></div>
+    <div class="fxl"></div>
+    <button class="del" data-i="delScene"></button>`;
+  $('scenes').appendChild(el);
+  const q = s => el.querySelector(s);
+  Object.keys(FX).forEach(ty => { const b = document.createElement('button'); b.dataset.fx = ty; b.onclick = () => { addFx(sc, q('.fxl'), ty); draw(1); }; q('.chips').appendChild(b); });
+  q('.rnd').onclick = () => { const ks = Object.keys(FX); for (let i = 0; i < 3; i++) addFx(sc, q('.fxl'), ks[Math.floor(Math.random() * ks.length)], 0.3 + Math.random() * 0.5); draw(1); };
+  q('.pf').onchange = e => { sc.pf = e.target.files[0] || null; sc.person = null; processPerson(sc); };
+  q('.bf').onchange = async e => { try { sc.bg = e.target.files[0] ? await loadImg(e.target.files[0]) : null; } catch (err) { $('st').textContent = tr('errBg') + ': ' + err.message; } draw(1); };
+  q('.dur').oninput = e => sc.dur = Math.max(0.5, +e.target.value || 0.5);
+  q('.bgc').oninput = e => sc.bgc = e.target.value;
+  q('.del').onclick = () => { if (scenes.length < 2) return; scenes.splice(scenes.indexOf(sc), 1); el.remove(); renum(); draw(1); };
+  applyLang(); return sc;
+}
+function renum() { [...$('scenes').children].forEach((el, i) => el.querySelector('legend').textContent = tr('scene') + ' ' + (i + 1)); }
+$('addScene').onclick = () => { if (scenes.length < 12) { addScene(); draw(1); } };
+
+const E = {
+  elastic: x => x === 0 ? 0 : x === 1 ? 1 : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * (2 * Math.PI / 3)) + 1,
+  bounce: x => { const n = 7.5625, d = 2.75;
+    if (x < 1 / d) return n * x * x;
+    if (x < 2 / d) return n * (x -= 1.5 / d) * x + 0.75;
+    if (x < 2.5 / d) return n * (x -= 2.25 / d) * x + 0.9375;
+    return n * (x -= 2.625 / d) * x + 0.984375; },
+  back: x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); },
+  expo: x => x === 1 ? 1 : 1 - Math.pow(2, -10 * x),
+  cubic: x => 1 - Math.pow(1 - x, 3)
+};
+function rng(seed) { let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
+
+function makeKeys(o, r, n) {
+  const keys = [{ sx: 1, sy: 1, rot: 0 }], names = ['elastic', 'bounce', 'back', 'expo', 'cubic'];
+  let acc = 0, spinN = 0;
+  for (let i = 1; i <= n; i++) {
+    const p = o.pw; let k;
+    if (o.pat === 'rand') k = { sx: 1 + (r() - 0.5) * 1.2 * p, sy: 1 + (r() - 0.4) * 1.6 * p };
+    else if (i % 2) k = { sx: 1 - 0.35 * p, sy: 1 + 0.9 * p };
+    else k = o.pat === 'udlr' ? { sx: 1 + 0.7 * p, sy: 1 - 0.45 * p } : { sx: 1, sy: 1 - 0.5 * p };
+    k.sx = Math.max(0.05, 1 + (k.sx - 1) * o.mx); k.sy = Math.max(0.05, 1 + (k.sy - 1) * o.my);
+    if (i === n) { k.sx = 1; k.sy = 1; }
+    let rot = 0;
+    if (o.rotMode === 'tilt') rot = (i % 2 ? 1 : -1) * o.rotDeg;
+    else if (o.rotMode === 'rand') rot = (r() * 2 - 1) * o.rotDeg;
+    else if (o.rotMode === 'spin') {
+      if ((i - 1) % o.spinEvery === 0) { const d = o.spinDir === 'alt' ? (spinN % 2 ? -1 : 1) : (o.spinDir === 'ccw' ? -1 : 1); acc += d * 360 * o.turns; spinN++; }
+      rot = acc;
+    }
+    if (i === n && o.rotMode !== 'spin') rot = 0;
+    k.rot = rot; k.e = o.ease === 'mix' ? names[Math.floor(r() * names.length)] : o.ease;
+    keys.push(k);
+  }
+  return keys;
+}
+function build() {
+  const o = {
+    t1: $('t1').value, t2: $('t2').value, o1: $('o1').value, o2: $('o2').value,
+    dI: $('useIntro').checked ? +$('dIntro').value : 0, dO: $('useOutro').checked ? +$('dOutro').value : 0,
+    aI: $('aIntro').value, aO: $('aOutro').value,
+    tw: +$('tw').value, pw: +$('pw').value, ease: $('ease').value, pat: $('pat').value,
+    flash: $('flash').checked, shake: $('shake').checked,
+    posX: +$('posX').value / 100, posY: +$('posY').value / 100, size: +$('size').value / 100,
+    piv: +$('piv').value, mx: +$('mx').value, my: +$('my').value,
+    rotMode: $('rotMode').value, rotDeg: +$('rotDeg').value,
+    spinEvery: +$('spinEvery').value, turns: +$('turns').value, spinDir: $('spinDir').value, fit: $('fit').checked,
+    shakeAmt: +$('shakeAmt').value, flashAmt: +$('flashAmt').value, gs: +$('gspd').value
+  };
+  let st = o.dI; const S = [];
+  scenes.forEach((sc, idx) => {
+    const n = Math.max(1, Math.round(sc.dur / o.tw));
+    S.push({ sc, start: st, dur: sc.dur, n, keys: makeKeys(o, rng(+$('seed').value + idx * 101), n) });
+    st += sc.dur;
+  });
+  o.dE = st - o.dI;
+  return { o, S, total: st + o.dO };
+}
+
+function drawCard(x1, x2, t, dur, anim) {
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  const ad = Math.max(0.1, Math.min(dur * 0.6, 1));
+  const items = [{ txt: x1, y: H / 2 - 220, size: 120 }, { txt: '×', y: H / 2, size: 100 }, { txt: x2, y: H / 2 + 220, size: 120 }];
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  items.forEach((it, i) => {
+    const q = anim === 'none' ? 1 : Math.min(1, Math.max(0, (t - i * 0.12) / ad));
+    let x = W / 2, sc = 1, al = 1, txt = it.txt;
+    if (anim === 'slide') x = W / 2 + (1 - E.back(q)) * (i % 2 ? 1 : -1) * W;
+    else if (anim === 'zoom') { sc = 1 + (1 - E.expo(q)) * 2.5; al = Math.min(1, q * 3); }
+    else if (anim === 'type') txt = it.txt.slice(0, Math.ceil(it.txt.length * q));
+    else if (anim === 'line') { x += (Math.random() - 0.5) * 14 * (1 - q); al = Math.min(1, q * 4); }
+    else if (anim === 'glitch') { al = q < 1 && Math.random() < 0.3 ? 0.3 : 1; }
+    ctx.font = `bold ${it.size}px sans-serif`;
+    const mw = ctx.measureText(it.txt).width;
+    ctx.font = `bold ${mw > W * 0.9 ? it.size * W * 0.9 / mw : it.size}px sans-serif`;
+    ctx.save(); ctx.translate(x, it.y); ctx.scale(sc, sc); ctx.globalAlpha = al;
+    if (anim === 'glitch' && q < 1) { const d = (1 - q) * 30 * Math.random(); ctx.fillStyle = '#f00'; ctx.fillText(txt, -d, 0); ctx.fillStyle = '#0ff'; ctx.fillText(txt, d, 0); }
+    ctx.fillStyle = '#fff'; ctx.fillText(txt, 0, 0); ctx.restore();
+  });
+  if (anim === 'line') { const q = Math.min(1, t / ad); if (q < 1) { ctx.fillStyle = '#f00'; ctx.fillRect(q * W - 3, 0, 6, H); } }
+}
+
+function drawBg(sc, t, gs) {
+  const g = LB.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
+  if (!sc.bg) { g.fillStyle = sc.bgc; g.fillRect(0, 0, W, H); return; }
+  let ox = 0, oy = 0, mir = false;
+  for (const e of sc.fx) if (e.type === 'scroll') { ox += t * gs * e.sp * e.vx; oy += t * gs * e.sp * e.vy; mir = mir || e.mir; }
+  const s = Math.max(W / sc.bg.width, H / sc.bg.height), tw = sc.bg.width * s, th = sc.bg.height * s;
+  ox = mod(ox, mir ? tw * 2 : tw); oy = mod(oy, mir ? th * 2 : th);
+  for (let i = -3; i <= Math.ceil(W / tw); i++) for (let j = -3; j <= Math.ceil(H / th); j++) {
+    const x0 = i * tw + ox, y0 = j * th + oy; if (x0 + tw < 0 || x0 > W || y0 + th < 0 || y0 > H) continue;
+    const fx = mir && mod(i, 2) === 1, fy = mir && mod(j, 2) === 1;
+    g.save(); g.translate(i * tw + ox + (fx ? tw : 0), j * th + oy + (fy ? th : 0)); g.scale(fx ? -1 : 1, fy ? -1 : 1);
+    g.drawImage(sc.bg, 0, 0, tw + 1, th + 1); g.restore();
+  }
+}
+function drawPerson(o, sc, sx, sy, rot, x) {
+  const g = LP.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
+  const img = sc.person;
+  if (!img) { g.fillStyle = '#fff'; g.font = '40px sans-serif'; g.textAlign = 'center'; g.fillText(tr('uploadPerson'), W / 2, H / 2); return; }
+  const base = (H * o.size) / img.height, w = img.width * base, h = img.height * base;
+  const cx = W * o.posX, py = H * o.posY - h + h * o.piv;
+  let dx = 0, dy = 0;
+  if (o.shake) { const m = (1 - x) * o.shakeAmt; dx = (Math.random() - 0.5) * m; dy = (Math.random() - 0.5) * m; }
+  let ssx = sx, ssy = sy;
+  if (o.fit) {
+    let m = Infinity;
+    if (o.piv > 0) m = Math.min(m, py / (h * o.piv));
+    if (o.piv < 1) m = Math.min(m, (H - py) / (h * (1 - o.piv)));
+    ssy = Math.min(ssy, m); ssx = Math.min(ssx, Math.min(cx, W - cx) / (w / 2));
+  }
+  g.translate(cx + dx, py + dy); g.rotate(rot * Math.PI / 180); g.scale(ssx, ssy);
+  g.drawImage(img, -w / 2, -h * o.piv, w, h);
+}
+const SC2 = mk();
+function fx(L, list, t, bt, kind, gs) {
+  const lg = L.getContext('2d'), sg = SC.getContext('2d');
+  for (const e of list) {
+    if (e.type === 'scroll') continue;
+    const a = e.am, tf = t * gs * e.sp;
+    sg.setTransform(1, 0, 0, 1, 0, 0); sg.globalAlpha = 1; sg.globalCompositeOperation = 'source-over'; sg.filter = 'none'; sg.imageSmoothingEnabled = true; sg.clearRect(0, 0, W, H);
+    const F = f => { sg.filter = f; sg.drawImage(L, 0, 0); sg.filter = 'none'; };
+    const C = (s, fn) => { sg.translate(W / 2, H / 2); sg.scale(s, s); fn && fn(); sg.drawImage(L, -W / 2, -H / 2); };
+    switch (e.type) {
+      case 'blur': F(`blur(${a * 40}px)`); break;
+      case 'invert': F(`invert(${a})`); break;
+      case 'gray': F(`grayscale(${a})`); break;
+      case 'sepia': F(`sepia(${a})`); break;
+      case 'saturate': F(`saturate(${1 + a * 4})`); break;
+      case 'hue': F(`hue-rotate(${(tf * a * 720) % 360}deg) saturate(${1 + a * 2})`); break;
+      case 'contrast': F(`contrast(${1 + a * 3}) saturate(${1 + a * 2})`); break;
+      case 'strobe': Math.floor(tf * 10) % 2 ? F(`invert(${a})`) : sg.drawImage(L, 0, 0); break;
+      case 'glow': sg.drawImage(L, 0, 0); sg.globalCompositeOperation = 'lighter'; sg.filter = `blur(${10 + a * 30}px)`; sg.globalAlpha = 0.4 + a * 0.6; sg.drawImage(L, 0, 0); break;
+      case 'vignette': { sg.drawImage(L, 0, 0); sg.globalCompositeOperation = 'source-atop'; const gr = sg.createRadialGradient(W / 2, H / 2, W * 0.25, W / 2, H / 2, W * 0.75); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, `rgba(0,0,0,${a})`); sg.fillStyle = gr; sg.fillRect(0, 0, W, H); break; }
+      case 'rgb': { const d = a * 40, g2 = SC2.getContext('2d');
+        for (const [c, dx] of [['#f00', -d], ['#0f0', 0], ['#00f', d]]) {
+          g2.setTransform(1, 0, 0, 1, 0, 0); g2.globalCompositeOperation = 'source-over'; g2.clearRect(0, 0, W, H); g2.drawImage(L, dx, 0);
+          g2.globalCompositeOperation = 'multiply'; g2.fillStyle = c; g2.fillRect(0, 0, W, H);
+          g2.globalCompositeOperation = 'destination-in'; g2.drawImage(L, dx, 0);
+          sg.globalCompositeOperation = 'lighter'; sg.drawImage(SC2, 0, 0);
+        } break; }
+      case 'vhs': { for (let y = 0; y < H; y += 8) { const dx = Math.random() < 0.04 ? (Math.random() - 0.5) * a * 120 : Math.sin(y / 30 + tf * 5) * a * 5; sg.drawImage(L, 0, y, W, 8, dx, y, W, 8); }
+        sg.globalCompositeOperation = 'source-atop'; sg.fillStyle = `rgba(0,0,0,${0.35 * a})`; for (let y = 0; y < H; y += 4) sg.fillRect(0, y, W, 2);
+        sg.fillStyle = `rgba(255,255,255,${0.4 * a})`; for (let i = 0; i < 3; i++) sg.fillRect(0, Math.random() * H, W, 2); break; }
+      case 'glitch': { sg.drawImage(L, 0, 0); if (Math.random() < 0.6) for (let i = 0, n = 2 + Math.round(a * 14); i < n; i++) { const y = Math.random() * H, h = 10 + Math.random() * 100; sg.clearRect(0, y, W, h); sg.drawImage(L, 0, y, W, h, (Math.random() - 0.5) * a * 300, y, W, h); } break; }
+      case 'wave': for (let y = 0; y < H; y += 6) { const dx = Math.sin(y / 50 + tf * 8) * a * 70; for (const m of [-W, 0, W]) sg.drawImage(L, 0, y, W, 6, dx + m, y, W, 6); } break;
+      case 'skew': { const c = Math.sin(tf * 4) * a * 0.5; sg.transform(1, 0, c, 1, -c * H / 2, 0); sg.drawImage(L, 0, 0); break; }
+      case 'mirror': sg.drawImage(L, 0, 0); sg.translate(W, 0); sg.scale(-1, 1); sg.drawImage(L, 0, 0, W / 2, H, 0, 0, W / 2, H); break;
+      case 'tile': { const n = 2 + Math.round(a * 2); for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) sg.drawImage(L, i * W / n, j * H / n, W / n, H / n); break; }
+      case 'pixel': { const k = 2 + a * 70; PX.width = Math.ceil(W / k); PX.height = Math.ceil(H / k); PX.getContext('2d').drawImage(L, 0, 0, PX.width, PX.height); sg.imageSmoothingEnabled = false; sg.drawImage(PX, 0, 0, PX.width * k, PX.height * k); break; }
+      case 'shake': sg.drawImage(L, (Math.random() - 0.5) * a * 50, (Math.random() - 0.5) * a * 50); break;
+      case 'zoom': C(1 + a * 0.3 * Math.sin(tf * 6)); break;
+      case 'pulse': C(1 + a * 0.3 * (1 - bt) * (1 - bt)); break;
+      case 'spin': { sg.translate(W / 2, H / 2); sg.rotate(tf * a * 2); sg.scale(kind === 'person' ? 1 : 1.45, kind === 'person' ? 1 : 1.45); sg.drawImage(L, -W / 2, -H / 2); break; }
+      case 'trail': { e._b = e._b || mk(); const bg = e._b.getContext('2d');
+        bg.globalCompositeOperation = 'destination-out'; bg.fillStyle = `rgba(0,0,0,${0.12 + 0.2 * (1 - a)})`; bg.fillRect(0, 0, W, H);
+        bg.globalCompositeOperation = 'source-over'; bg.globalAlpha = 1 - a * 0.6; bg.drawImage(L, 0, 0); bg.globalAlpha = 1; sg.drawImage(e._b, 0, 0); break; }
+      case 'flash': sg.drawImage(L, 0, 0); sg.globalCompositeOperation = 'source-atop'; sg.fillStyle = `rgba(255,255,255,${a * (1 - bt)})`; sg.fillRect(0, 0, W, H); break;
+    }
+    lg.setTransform(1, 0, 0, 1, 0, 0); lg.globalCompositeOperation = 'source-over'; lg.clearRect(0, 0, W, H); lg.drawImage(SC, 0, 0);
+  }
+}
+
+function render(T, t) {
+  const { o, S } = T;
+  if (t < o.dI) { drawCard(o.t1, o.t2, t, o.dI, o.aI); return; }
+  if (t >= o.dI + o.dE) { drawCard(o.o1, o.o2, t - o.dI - o.dE, o.dO, o.aO); return; }
+  const s = S.find(x => t >= x.start && t < x.start + x.dur) || S[S.length - 1], sc = s.sc;
+  const te = t - s.start, i = Math.min(s.n - 1, Math.floor(te / o.tw));
+  const x = Math.min(1, (te - i * o.tw) / o.tw), a = s.keys[i], b = s.keys[i + 1], k = E[b.e](x);
+  drawBg(sc, t, o.gs);
+  drawPerson(o, sc, a.sx + (b.sx - a.sx) * k, a.sy + (b.sy - a.sy) * k, a.rot + (b.rot - a.rot) * k, x);
+  const by = tg => sc.fx.filter(e => e.tg === tg && e.type !== 'scroll');
+  fx(LB, by('bg'), t, x, 'bg', o.gs); fx(LP, by('person'), t, x, 'person', o.gs);
+  if (by('all').length) {
+    const g = LA.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H); g.drawImage(LB, 0, 0); g.drawImage(LP, 0, 0);
+    fx(LA, by('all'), t, x, 'all', o.gs); ctx.drawImage(LA, 0, 0);
+  } else { ctx.drawImage(LB, 0, 0); ctx.drawImage(LP, 0, 0); }
+  if (o.flash && x < 0.15) { ctx.fillStyle = `rgba(255,255,255,${o.flashAmt * (1 - x / 0.15)})`; ctx.fillRect(0, 0, W, H); }
+}
+function draw(t0) { report(); const T = build(); render(T, T.o.dI + 0.01); }
+
+async function makeBeat() {
+  const T = build(), tw = T.o.tw, sr = 44100;
+  $('st').textContent = tr('makingMusic');
+  const oc = new OfflineAudioContext(2, Math.ceil(sr * (T.total + 0.5)), sr);
+  const P = { phonk: { kd: 0.4, kf: 130, bass: 'sine', bl: 1.1, hat: 2, drive: true }, techno: { kd: 0.2, kf: 160, bass: 'sawtooth', bl: 0.45, hat: 2, drive: false }, lite: { kd: 0.15, kf: 100, bass: 'triangle', bl: 0.7, hat: 1, drive: false } }[$('mstyle').value];
+  const comp = oc.createDynamicsCompressor(), mg = oc.createGain(); comp.connect(mg); mg.connect(oc.destination);
+  mg.gain.setValueAtTime(0.9, 0); mg.gain.setValueAtTime(0.9, T.o.dI + T.o.dE); mg.gain.linearRampToValueAtTime(0, T.total);
+  const nb = oc.createBuffer(1, sr, sr), nd = nb.getChannelData(0); for (let i = 0; i < sr; i++) nd[i] = Math.random() * 2 - 1;
+  const curve = new Float32Array(1024); for (let i = 0; i < 1024; i++) { const x = i / 512 - 1; curve[i] = Math.tanh(x * 3); }
+  const env = (g, t, v, d) => { g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.001, t + d); };
+  const noise = (t, d, hp, v) => { const n = oc.createBufferSource(); n.buffer = nb; const f = oc.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = hp; const g = oc.createGain(); env(g, t, v, d); n.connect(f); f.connect(g); g.connect(comp); n.start(t, 0, d + 0.05); };
+  const kick = t => { const o = oc.createOscillator(), g = oc.createGain(); o.frequency.setValueAtTime(P.kf, t); o.frequency.exponentialRampToValueAtTime(40, t + 0.12); env(g, t, 1, P.kd); o.connect(g);
+    if (P.drive) { const w = oc.createWaveShaper(); w.curve = curve; g.connect(w); w.connect(comp); } else g.connect(comp); o.start(t); o.stop(t + P.kd + 0.05); };
+  const snare = t => { noise(t, 0.18, 1500, 0.7); const o = oc.createOscillator(), g = oc.createGain(); o.type = 'triangle'; o.frequency.value = 190; env(g, t, 0.5, 0.12); o.connect(g); g.connect(comp); o.start(t); o.stop(t + 0.15); };
+  const bass = (t, f, d) => { const o = oc.createOscillator(), g = oc.createGain(), lp = oc.createBiquadFilter(); o.type = P.bass; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 400;
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.5 * P.bl, t + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t + d); o.connect(lp); lp.connect(g); g.connect(comp); o.start(t); o.stop(t + d + 0.05); };
+  if (T.o.dI > 0) { const n = oc.createBufferSource(); n.buffer = nb; n.loop = true; const f = oc.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(300, 0); f.frequency.exponentialRampToValueAtTime(6000, T.o.dI);
+    const g = oc.createGain(); g.gain.setValueAtTime(0.02, 0); g.gain.linearRampToValueAtTime(0.5, T.o.dI); n.connect(f); f.connect(g); g.connect(comp); n.start(0); n.stop(T.o.dI); }
+  const notes = [55, 55, 65.41, 49];
+  for (const s of T.S) for (let i = 0; i < s.n; i++) {
+    const t = s.start + i * tw;
+    kick(t); if (i % 2) snare(t);
+    noise(t, 0.05, 7000, 0.25); noise(t + tw / 2, 0.05, 7000, 0.18); if (P.hat > 1) { noise(t + tw / 4, 0.03, 8000, 0.1); noise(t + tw * 0.75, 0.03, 8000, 0.1); }
+    bass(t, notes[i % 4], tw * 0.9);
+  }
+  audBuf = await oc.startRendering();
+  $('audOff').value = 0; { const bpm = (60 / tw).toFixed(0), dl = audBuf.duration.toFixed(1); setAudMsg(() => tr('beatReady', bpm, dl)); }
+  $('st').textContent = tr('musicReady'); report();
+}
+$('mkbeat').onclick = () => makeBeat().catch(err => { $('st').textContent = tr('errMusic') + ': ' + err.message; });
+
+function play(record) {
+  if (running) return;
+  running = true;
+  const T = build(), fps = +$('fps').value || 60;
+  scenes.forEach(sc => sc.fx.forEach(e => { if (e._b) e._b.getContext('2d').clearRect(0, 0, W, H); }));
+  let ac = null, src = null, rec = null, chunks = [];
+  const stream = record ? cv.captureStream(0) : null;
+  if (audBuf) {
+    ac = new AudioContext(); src = ac.createBufferSource(); src.buffer = audBuf;
+    const dest = ac.createMediaStreamDestination();
+    src.connect(dest); src.connect(ac.destination);
+    if (record) dest.stream.getAudioTracks().forEach(tr => stream.addTrack(tr));
+    src.start(0, Math.min(Math.max(0, +$('audOff').value || 0), Math.max(0, audBuf.duration - 0.1)));
+  }
+  if (record) {
+    const mt = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(m => MediaRecorder.isTypeSupported(m));
+    rec = new MediaRecorder(stream, { mimeType: mt, videoBitsPerSecond: fps >= 100 ? 24e6 : fps >= 75 ? 16e6 : 12e6 });
+    rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+    rec.onstop = () => { const url = URL.createObjectURL(new Blob(chunks, { type: 'video/webm' })); $('out').innerHTML = `<a href="${url}" download="tweenslop.webm">⬇ ${tr('download')} tweenslop.webm (${fps} fps)</a>`; $('st').textContent = tr('done'); };
+    rec.start();
+  }
+  const track = record ? stream.getVideoTracks()[0] : null;
+  const push = () => { if (track && track.requestFrame) track.requestFrame(); };
+  const t0 = performance.now(); let nextT = 0;
+  $('st').textContent = record ? tr('recording', fps) : tr('playing');
+  const stop = () => { if (src) try { src.stop(); } catch (e) {} if (ac) ac.close(); if (rec && rec.state !== 'inactive') rec.stop(); running = false; };
+  (function loop() {
+    const t = (performance.now() - t0) / 1000;
+    try {
+      if (t >= T.total) { render(T, T.total - 0.001); push(); stop(); if (!rec) $('st').textContent = ''; return; }
+      if (record) { if (t >= nextT) { render(T, t); push(); nextT += 1 / fps; if (t - nextT > 0.1) nextT = t; } setTimeout(loop, 0); }
+      else { render(T, t); requestAnimationFrame(loop); }
+    } catch (err) { $('st').textContent = tr('err') + ': ' + err.message; stop(); }
+  })();
+}
+function safePlay(r) { try { play(r); } catch (err) { running = false; $('st').textContent = tr('err') + ': ' + err.message; } }
+$('gen').onclick = () => { draw(1); if (!scenes.some(s => s.person)) { $('st').textContent = tr('noPerson'); return; } safePlay(false); };
+$('prev').onclick = () => safePlay(false);
+$('rec').onclick = () => safePlay(true);
+
+document.querySelectorAll('input[type=range]:not(.am)').forEach(r => {
+  const sp = document.createElement('span'); r.after(sp);
+  const upd = () => sp.textContent = ' ' + r.value + ' ';
+  r.addEventListener('input', upd); upd();
+});
+document.addEventListener('input', () => { if (!running) draw(1); });
+document.addEventListener('change', () => { if (!running) draw(1); });
+addScene(); applyLang(); draw(1);
+document.querySelectorAll('.lang button').forEach(b => b.onclick = () => { LANG = b.dataset.l; try { localStorage.setItem('tw_lang', LANG); } catch (e) {} applyLang(); });
+</script>
+</body>
+</html>
